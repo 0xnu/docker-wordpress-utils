@@ -13,7 +13,7 @@ Make the scripts executable:
 .env
 ----
 
-Update .env with your MySQL details.
+Update **.env** with your MySQL details.
 
 .s3upload.conf
 --------------
