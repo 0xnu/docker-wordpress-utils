@@ -1,0 +1,50 @@
+version: '3.3'
+services:
+  mysql:
+    image: mariadb
+    restart: always
+    expose:
+     - 3306
+    environment:
+     - MYSQL_ROOT_PASSWORD
+     - MYSQL_DATABASE
+     - MYSQL_USER
+     - MYSQL_PASSWORD
+    volumes:
+     - mysql_data:/var/lib/mysql
+  wordpress:
+    image: wordpress
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+     - mysql
+    environment:
+     - "WORDPRESS_DB_NAME=$MYSQL_DATABASE"
+     - "WORDPRESS_DB_USER=$MYSQL_USER"
+     - "WORDPRESS_DB_PASSWORD=$MYSQL_PASSWORD"
+     - VIRTUAL_HOST
+     - LETSENCRYPT_HOST
+     - LETSENCRYPT_EMAIL
+    volumes:
+     - wordpress_files:/var/www/html
+  backup:
+    image: confirm/mysql-backup
+    volumes:
+        - ./db-backup:/backup
+    links:
+        - mysql
+    #restart: never
+  restore:
+    environment:
+        - MODE=RESTORE
+    image: confirm/mysql-backup
+    volumes:
+        - ./db-backup:/backup
+    links:
+        - mysql
+    #restart: never
+volumes:
+  mysql_data:
+  wordpress_files:
