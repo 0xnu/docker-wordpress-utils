@@ -6,10 +6,10 @@ services:
     expose:
      - 3306
     environment:
-     - MYSQL_ROOT_PASSWORD
-     - MYSQL_DATABASE
-     - MYSQL_USER
-     - MYSQL_PASSWORD
+     - "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD"
+     - "MYSQL_DATABASE=$MYSQL_DATABASE"
+     - "MYSQL_USER=$MYSQL_USER"
+     - "MYSQL_PASSWORD=$MYSQL_PASSWORD"
     volumes:
      - mysql_data:/var/lib/mysql
   wordpress:
@@ -33,9 +33,10 @@ services:
     image: confirm/mysql-backup
     volumes:
         - ./db-backup:/backup
+    environment:
+        - IMAGE_NAME=db-backup
     links:
         - mysql
-    #restart: never
   restore:
     environment:
         - MODE=RESTORE
@@ -44,7 +45,8 @@ services:
         - ./db-backup:/backup
     links:
         - mysql
-    #restart: never
 volumes:
   mysql_data:
+    driver: local
   wordpress_files:
+    driver: local

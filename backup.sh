@@ -1,18 +1,13 @@
 #!/usr/bin/env bash
 # WordPress Docker Backup
 
-# root_wordpress_1 = wordpress container name
-# root_mysql_1 = mysql/mariadb container name
+# ebff8761783f = running container name
+# 5cf41cc99d14 = backup name
 
-docker run --rm --volumes-from root_wordpress_1 -v $(pwd)/backup:/backup/ ubuntu tar -cvf /backup/matchrecap_com.tar /var/www/html/ &&
-docker exec root_mysql_1 sh -c 'exec mysqldump -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" "$MYSQL_DATABASE"' > $(pwd)/backup/matchrecap_com.sql &&
+docker commit -p ebff8761783f wordpress_backup &&
+docker commit -p 5cf41cc99d14 mariadb_backup
+echo "Creating backup of your wordpress site and database."
 
-
-if [ -z "$1" ]; then
-  echo "Made matchrecap_com.tar and matchrecap_com.sql"
-else
-  echo "Uploading to S3"
-  aws s3 mv matchrecap_com.tar matchrecap_com.sql $1
-fi
-
-#rm -rf backup/*
+docker save -o ~/wordpress_backup.tar wordpress_backup &&
+docker save -o ~/mariadb_backup.tar mariadb_backup
+echo "Saving your containers as a tar file."
