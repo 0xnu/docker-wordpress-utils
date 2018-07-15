@@ -43,7 +43,7 @@ Usage
 4. Send your backup to AWS S3.
 
     ```sh
-    sudo ./s3-upload.sh matchrecap_com.tar matchrecap_com.sql
+    sudo ./s3-upload.sh wordpress_site.tar database.sql
     # Of course, the names of your backups might be different. Update accordingly!
     ```
 5. Destroy your stack! Tear it down!
