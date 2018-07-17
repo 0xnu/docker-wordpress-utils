@@ -3,50 +3,38 @@ services:
   mysql:
     image: mariadb
     restart: always
-    expose:
-     - 3306
-    environment:
-     - "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD"
-     - "MYSQL_DATABASE=$MYSQL_DATABASE"
-     - "MYSQL_USER=$MYSQL_USER"
-     - "MYSQL_PASSWORD=$MYSQL_PASSWORD"
     volumes:
-     - mysql_data:/var/lib/mysql
+      - mariadb-data
+      - ./mysql/backup:/tmp/mysql/backup
+    environment:
+      - "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD"
+      - "MYSQL_DATABASE=$MYSQL_DATABASE"
+      - "MYSQL_USER=$MYSQL_USER"
+      - "MYSQL_PASSWORD=$MYSQL_PASSWORD"
+  mariadb-data:
+    image: mariadb
+    volumes:
+      - ./volumes/mysql:/var/lib/mysql
+      - "/etc/localtime:/etc/localtime:ro"
+    command: /bin/true
   wordpress:
     image: wordpress
     restart: always
+    volumes:
+      - wpdata
     ports:
-      - 80:80
-      - 443:443
-    depends_on:
-     - mysql
+      - "80:80"
+      - "443:443"
     environment:
-     - "WORDPRESS_DB_NAME=$MYSQL_DATABASE"
-     - "WORDPRESS_DB_USER=$MYSQL_USER"
-     - "WORDPRESS_DB_PASSWORD=$MYSQL_PASSWORD"
-     - VIRTUAL_HOST
-     - LETSENCRYPT_HOST
-     - LETSENCRYPT_EMAIL
-    volumes:
-     - wordpress_files:/var/www/html
-  backup:
-    image: confirm/mysql-backup
-    volumes:
-        - ./db-backup:/backup
-    environment:
-        - IMAGE_NAME=db-backup
+      - "WORDPRESS_DB_PASSWORD=$MYSQL_PASSWORD"
     links:
-        - mysql
-  restore:
-    environment:
-        - MODE=RESTORE
-    image: confirm/mysql-backup
+      - mysql
+  cadvisor:
+    image: google/cadvisor
     volumes:
-        - ./db-backup:/backup
-    links:
-        - mysql
-volumes:
-  mysql_data:
-    driver: local
-  wordpress_files:
-    driver: local
+      - "/:/rootfs:ro"
+      - "/var/run:/var/run:rw"
+      - "/sys:/sys:ro"
+      - "/var/lib/docker/:/var/lib/docker:ro"
+    ports:
+      - "8080:8080"
