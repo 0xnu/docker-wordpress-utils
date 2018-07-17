@@ -8,7 +8,7 @@ Prerequisites
 
 Make the scripts executable:
 
-    chmod +x backup.sh && chmod +x restore.sh && chmod +x destroy.sh && chmod +x s3-upload.sh
+    chmod +x destroy.sh && chmod +x s3-upload.sh
 
 .env
 ----
