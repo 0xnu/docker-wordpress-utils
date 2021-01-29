@@ -84,7 +84,7 @@ S3UPLOAD
 
 Usage: S3UPLOAD [file ...]
 
-More info: https://github.com/afoke/docker-wordpress-utils
+More info: https://github.com/0xnu/docker-wordpress-utils
 EOS
 
     exit 1
